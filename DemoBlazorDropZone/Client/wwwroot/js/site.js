@@ -6,7 +6,7 @@ function initDropZone(pIndexComponent) {
         myDropzone = new Dropzone("div.my-dropzone", { url: "/fake" });//we don't want using automatic post but library need url
         Dropzone.forElement("div.my-dropzone").options.autoProcessQueue = false;//we don't want using automatic post
     }
-    
+
     //Dropzone.forElement("div.drop-zone").options.previewsContainer = false;
     myDropzone.off("addedfile");
     myDropzone.on("addedfile", function (file) {
@@ -20,19 +20,20 @@ function initDropZone(pIndexComponent) {
 
             console.log(base64.length);
             indexComponent.invokeMethodAsync('UploadFile', base64)
-            .then((data) => {
-                myDropzone.removeFile(reader.file);
-
-                $("#uploadFileLoader").hide();
-            })
-            .catch((error) => {
-                alert("error : " + error.toString());
-                $("#uploadFileLoader").hide();
-                if (reader.file) {
+                .then((data) => {
                     myDropzone.removeFile(reader.file);
-                }
 
-            });
+                    $("#uploadFileLoader").hide();
+                })
+                .catch((error) => {
+                    console.error(error);
+                    alert("error : " + error.toString());
+                    $("#uploadFileLoader").hide();
+                    if (reader.file) {
+                        myDropzone.removeFile(reader.file);
+                    }
+
+                });
 
 
         };
