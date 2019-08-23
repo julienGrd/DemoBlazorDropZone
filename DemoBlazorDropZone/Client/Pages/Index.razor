@@ -1,0 +1,52 @@
+﻿@page "/"
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+
+<div class="dropzone-container" style="position: relative">
+    <div class="dropzone my-dropzone">
+
+    </div>
+    <div class="loading-overlay" id="uploadFileLoader" style="display: none;">
+        <div class="loader-container">
+            <div class="dot-loader"></div>
+            <div class="dot-loader"></div>
+            <div class="dot-loader"></div>
+        </div>
+    </div>
+</div>
+
+
+<div class="result-base64">
+    <span>uploaded base64 file will be shown below</span>
+    <br />
+    @*<p>
+        @UploadedBase64
+    </p>*@
+    <textarea rows="6" @bind="@UploadedBase64" disabled style="width:100%" />
+</div>
+
+@code {
+    [Inject]
+    protected IJSRuntime JsRuntime { get; set; }
+
+    protected string UploadedBase64 { get; set; }
+
+    protected override async Task OnAfterRenderAsync()
+    {
+        await this.JsRuntime.InvokeAsync<object>("initDropZone", DotNetObjectRef.Create(this));
+    }
+
+    [JSInvokable]
+    public async Task UploadFile(string base64)
+    {
+        this.UploadedBase64 = base64;
+
+        this.StateHasChanged();
+
+        await Task.CompletedTask;
+    }
+}
